@@ -1,0 +1,722 @@
+/* =========================================
+   SpendWise Dashboard — Week 4
+   Built from Week 3 Personal Budget Tracker
+========================================= */
+
+
+/* =========================================
+   1. Theme variables
+========================================= */
+
+
+:root {
+    --background: #f4f7fb;
+    --card-background: #ffffff;
+    --primary: #1f3c5b;
+    --primary-dark: #152d45;
+    --accent: #2a9d8f;
+    --accent-dark: #217c71;
+    --highlight: #e9c46a;
+    --danger: #d95d39;
+
+
+    --text: #263238;
+    --muted-text: #65727e;
+    --border: #dce4ec;
+    --light-row: #f8fafc;
+    --soft-green: #eef8f6;
+    --input-background: #fbfcfe;
+    --white: #ffffff;
+
+
+    --sidebar-background: #152d45;
+    --sidebar-text: #d6e0e9;
+    --sidebar-hover: rgba(255, 255, 255, 0.1);
+
+
+    --shadow: 0 10px 25px rgba(31, 60, 91, 0.08);
+    --shadow-hover: 0 14px 28px rgba(31, 60, 91, 0.16);
+
+
+    --heading-font: "Poppins", sans-serif;
+    --body-font: "Open Sans", sans-serif;
+}
+
+
+/* Stretch goal: dark theme only overrides variables */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --background: #0f172a;
+        --card-background: #1e293b;
+        --primary: #dbeafe;
+        --primary-dark: #93c5fd;
+        --accent: #34d399;
+        --accent-dark: #6ee7b7;
+        --highlight: #fbbf24;
+        --danger: #fb7185;
+
+
+        --text: #e5e7eb;
+        --muted-text: #a7b4c5;
+        --border: #334155;
+        --light-row: #263449;
+        --soft-green: #153d37;
+        --input-background: #182235;
+        --white: #ffffff;
+
+
+        --sidebar-background: #091423;
+        --sidebar-text: #cbd5e1;
+        --sidebar-hover: rgba(255, 255, 255, 0.09);
+
+
+        --shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+        --shadow-hover: 0 14px 28px rgba(0, 0, 0, 0.4);
+    }
+}
+
+
+/* =========================================
+   2. Global reset
+========================================= */
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+html {
+    scroll-behavior: smooth;
+}
+
+
+body {
+    min-height: 100vh;
+    background-color: var(--background);
+    color: var(--text);
+    font-family: var(--body-font);
+    line-height: 1.6;
+}
+
+
+img {
+    display: block;
+    max-width: 100%;
+}
+
+
+button,
+input,
+select {
+    font: inherit;
+}
+
+
+h1,
+h2,
+h3 {
+    color: var(--primary);
+    font-family: var(--heading-font);
+}
+
+
+p {
+    color: var(--muted-text);
+}
+
+
+/* =========================================
+   3. Dashboard layout — CSS Grid
+========================================= */
+
+
+.dashboard-layout {
+    display: grid;
+    grid-template-columns: 250px minmax(0, 1fr);
+    min-height: 100vh;
+}
+
+
+/* =========================================
+   4. Sidebar navigation — Flexbox
+========================================= */
+
+
+.sidebar {
+    position: sticky;
+    top: 0;
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+    gap: 2.5rem;
+    padding: 1.75rem 1.25rem;
+    background-color: var(--sidebar-background);
+}
+
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0 0.5rem;
+    color: var(--white);
+    font-family: var(--heading-font);
+    font-size: 1.45rem;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+
+.brand img {
+    width: 38px;
+    height: 38px;
+    padding: 0.3rem;
+    border-radius: 10px;
+    background-color: var(--accent);
+    object-fit: contain;
+}
+
+
+.navigation {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+}
+
+
+.nav-link {
+    padding: 0.72rem 0.8rem;
+    border-radius: 9px;
+    color: var(--sidebar-text);
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 200ms ease, color 200ms ease,
+        transform 200ms ease;
+}
+
+
+.nav-link:hover,
+.nav-link:focus {
+    background-color: var(--sidebar-hover);
+    color: var(--white);
+    outline: none;
+    transform: translateX(3px);
+}
+
+
+.nav-link:focus-visible {
+    outline: 2px solid var(--highlight);
+    outline-offset: 2px;
+}
+
+
+.nav-link.active {
+    background-color: var(--accent);
+    color: var(--white);
+}
+
+
+.sidebar-message {
+    margin-top: auto;
+    padding: 1rem 0.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.16);
+    color: var(--sidebar-text);
+    font-size: 0.82rem;
+}
+
+
+/* =========================================
+   5. Main dashboard content — Flexbox
+========================================= */
+
+
+.dashboard-main {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 2rem;
+}
+
+
+/* =========================================
+   6. Header — Flexbox
+========================================= */
+
+
+.dashboard-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background-color: var(--card-background);
+    box-shadow: var(--shadow);
+}
+
+
+.eyebrow {
+    margin-bottom: 0.35rem;
+    color: var(--accent-dark);
+    font-family: var(--heading-font);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+
+.dashboard-header h1 {
+    margin-bottom: 0.35rem;
+    font-size: clamp(1.4rem, 3vw, 2.1rem);
+    line-height: 1.25;
+}
+
+
+.header-description {
+    font-size: 0.95rem;
+}
+
+
+.user-area {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-shrink: 0;
+}
+
+
+.user-details {
+    display: flex;
+    flex-direction: column;
+    text-align: right;
+}
+
+
+.user-details span {
+    color: var(--muted-text);
+    font-size: 0.8rem;
+}
+
+
+.user-details strong {
+    color: var(--primary);
+    font-family: var(--heading-font);
+    font-size: 0.95rem;
+}
+
+
+.profile-button {
+    padding: 0.65rem 1rem;
+    border: none;
+    border-radius: 8px;
+    background-color: var(--accent);
+    color: var(--white);
+    cursor: pointer;
+    font-weight: 700;
+    transition: background-color 200ms ease, transform 200ms ease,
+        box-shadow 200ms ease;
+}
+
+
+.profile-button:hover,
+.profile-button:focus {
+    background-color: var(--accent-dark);
+    box-shadow: 0 5px 12px rgba(42, 157, 143, 0.25);
+    outline: none;
+    transform: translateY(-2px);
+}
+
+
+.profile-button:focus-visible {
+    outline: 3px solid var(--highlight);
+    outline-offset: 2px;
+}
+
+
+/* =========================================
+   7. Main sections
+========================================= */
+
+
+.main-card {
+    padding: 1.6rem;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background-color: var(--card-background);
+    box-shadow: var(--shadow);
+}
+
+
+.main-card > h2 {
+    margin-bottom: 1.25rem;
+    font-size: 1.35rem;
+}
+
+
+/* =========================================
+   8. Summary cards — Grid + Flexbox
+========================================= */
+
+
+.summary-cards {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+
+.summary-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-height: 125px;
+    padding: 1.2rem;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background-color: var(--light-row);
+    transition: transform 200ms ease, box-shadow 200ms ease,
+        border-color 200ms ease;
+}
+
+
+.summary-card:hover,
+.summary-card:focus {
+    border-color: var(--accent);
+    box-shadow: var(--shadow-hover);
+    outline: none;
+    transform: translateY(-4px);
+}
+
+
+.summary-icon {
+    display: flex;
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-family: var(--heading-font);
+    font-size: 1.45rem;
+    font-weight: 700;
+}
+
+
+.income-card {
+    border-left: 4px solid var(--accent);
+}
+
+
+.income-card .summary-icon {
+    background-color: rgba(42, 157, 143, 0.15);
+    color: var(--accent-dark);
+}
+
+
+.expense-card {
+    border-left: 4px solid var(--danger);
+}
+
+
+.expense-card .summary-icon {
+    background-color: rgba(217, 93, 57, 0.15);
+    color: var(--danger);
+}
+
+
+.balance-card {
+    border-left: 4px solid var(--highlight);
+}
+
+
+.balance-card .summary-icon {
+    background-color: rgba(233, 196, 106, 0.25);
+    color: #a57c13;
+}
+
+
+.summary-card h3 {
+    margin-bottom: 0.25rem;
+    font-size: 0.95rem;
+}
+
+
+.summary-card p {
+    color: var(--accent-dark);
+    font-family: var(--heading-font);
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+
+.summary-card span {
+    color: var(--muted-text);
+    font-size: 0.8rem;
+}
+
+
+/* =========================================
+   9. Week 4 category cards — Grid + Flexbox
+========================================= */
+
+
+.category-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+
+.category-card {
+    display: flex;
+    min-height: 180px;
+    flex-direction: column;
+    padding: 1.2rem;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background-color: var(--light-row);
+    transition: transform 200ms ease, box-shadow 200ms ease,
+        border-color 200ms ease;
+}
+
+
+.category-card:hover,
+.category-card:focus {
+    border-color: var(--accent);
+    box-shadow: var(--shadow-hover);
+    outline: none;
+    transform: translateY(-5px);
+}
+
+
+.category-icon {
+    display: flex;
+    width: 42px;
+    height: 42px;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.9rem;
+    border-radius: 10px;
+    background-color: var(--soft-green);
+    font-size: 1.25rem;
+}
+
+
+.category-card h3 {
+    margin-bottom: 0.35rem;
+    font-size: 1rem;
+}
+
+
+.category-amount {
+    margin-top: auto;
+    color: var(--accent-dark);
+    font-family: var(--heading-font);
+    font-size: 1.45rem;
+    font-weight: 700;
+}
+
+
+.category-detail {
+    margin-top: 0.25rem;
+    font-size: 0.85rem;
+}
+
+
+/* =========================================
+   10. Video section
+========================================= */
+
+
+#reports {
+    text-align: center;
+}
+
+
+.video-container {
+    width: 100%;
+    max-width: 760px;
+    margin: 0 auto;
+    overflow: hidden;
+    border-radius: 12px;
+    box-shadow: var(--shadow-hover);
+}
+
+
+.video-container iframe {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    min-height: 315px;
+    border: 0;
+}
+
+
+/* =========================================
+   11. Instructions
+========================================= */
+
+
+#settings details {
+    margin-top: 0.75rem;
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background-color: var(--light-row);
+}
+
+
+#settings summary {
+    color: var(--accent-dark);
+    cursor: pointer;
+    font-family: var(--heading-font);
+    font-weight: 600;
+}
+
+
+#settings ol {
+    margin: 1rem 0 1rem 1.25rem;
+}
+
+
+#settings li {
+    margin-bottom: 0.55rem;
+}
+
+
+#settings strong {
+    color: var(--primary);
+}
+
+
+.notice {
+    padding: 0.85rem 1rem;
+    border-left: 4px solid var(--highlight);
+    border-radius: 4px;
+    background-color: #fffaf0;
+    color: var(--muted-text);
+    font-size: 0.93rem;
+}
+
+
+/* =========================================
+   12. Footer
+========================================= */
+
+
+footer {
+    padding: 0.5rem 0 1rem;
+    text-align: center;
+}
+
+
+footer p {
+    font-size: 0.85rem;
+}
+
+
+/* =========================================
+   13. Responsive layout below 768px
+========================================= */
+
+
+@media (max-width: 768px) {
+    .dashboard-layout {
+        grid-template-columns: 1fr;
+    }
+
+
+    .sidebar {
+        position: static;
+        min-height: auto;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 1rem;
+    }
+
+
+    .brand {
+        padding: 0;
+        font-size: 1.2rem;
+    }
+
+
+    .brand img {
+        width: 32px;
+        height: 32px;
+    }
+
+
+    .navigation {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 0.35rem;
+    }
+
+
+    .nav-link {
+        padding: 0.45rem 0.6rem;
+        font-size: 0.82rem;
+    }
+
+
+    .nav-link:hover,
+    .nav-link:focus {
+        transform: none;
+    }
+
+
+    .sidebar-message {
+        display: none;
+    }
+
+
+    .dashboard-main {
+        gap: 1rem;
+        padding: 1rem;
+    }
+
+
+    .dashboard-header {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 1.25rem;
+    }
+
+
+    .user-area {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+
+    .user-details {
+        text-align: left;
+    }
+
+
+    .summary-cards,
+    .category-grid {
+        grid-template-columns: 1fr;
+    }
+
+
+    .main-card {
+        padding: 1.25rem;
+    }
+
+
+    .video-container iframe {
+        min-height: 220px;
+    }
+}
